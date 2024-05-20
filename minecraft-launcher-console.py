@@ -25,11 +25,11 @@ def maximum(max_value, value):
     max_value[0] = value
 
 
-minecraft_directory = minecraft_launcher_lib.utils.get_minecraft_directory()
+minecraft_directory = ".gudu" #minecraft_launcher_lib.utils.get_minecraft_directory()
 lang = input("язык|language 'ru' or|или 'en': ")
 if lang == "ru":
     l_l = ru_l
-    l_l_s =ru_l_s
+    l_l_s = ru_l_s
 else:
     l_l = en_l
     l_l_s = en_l_s
@@ -80,7 +80,7 @@ options["gameDirectory"] = minecraft_directory
 
 if loader == "fabric":
     subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
-        version="fabric-loader-" + versionc + str(fabric_loader_new), minecraft_directory=minecraft_directory,
+        version="fabric-loader-" + str(fabric_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
         options=options))
 
 if loader == "forge":
