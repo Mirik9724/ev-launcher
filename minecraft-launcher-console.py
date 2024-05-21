@@ -7,12 +7,17 @@ import threading
 
 ru_l = ["Введите версию: ", "Введите ник: ", "(если его нету нечего не вводите): ", "Загрузчик модов('fabric', 'forge', 'quilt', 'нету'): ", "Сколько RAM выделить в Gygabyte: "]
 en_l = ["Enter version: ", "Enter nickname: ", "(if you don't have one, don't enter anything): ", "Mod loader('fabric', 'forge', 'quilt', 'no'): ", "How much RAM to allocate in Gygabyte: "]
-ru_l_s = ["Версия не найдена", "Fabric не поддерживает эту версию", "Forge не поддерживает эту версию", "JVM не может быть запущена"]
-en_l_s = ["Version not found", "Fabric does not support this version", "Forge does not support this version", "JVM can't start"]
+ua_l = ["Введіть версію: ", "Введіть нік: ", "(якщо його немає нічого не вводьте): ", "Завантажувач модів('fabric', 'forge', 'quilt', 'нету'): ", "Скільки RAM виділити в Gygabyte: "]
+
+ru_l_s = ["Версия не найдена", "Fabric не поддерживает эту версию", "Forge не поддерживает эту версию", "JVM не может быть запущена", "Quilt не поддерживает эту версию", "RAM должно быть целым числом"]
+en_l_s = ["Version not found", "Fabric does not support this version", "Forge does not support this version", "JVM can't start", "Quilt does not support this version", "RAM must be an integer"]
+ua_l_s = ["Версія не знайдена", "Fabric не підтримує цю версію", "Forge не підтримує цю версію", "JVM не може бути запущена", "Quilt не підтримує цю версію", "RAM повинно бути цілим числом"]
+
 l_l = []
 l_l_s = []
 
 fabric_loader_new = minecraft_launcher_lib.fabric.FabricLoader
+quilt_loader_new = minecraft_launcher_lib.quilt.QuiltLoader
 
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
@@ -26,11 +31,14 @@ def maximum(max_value, value):
     max_value[0] = value
 
 
-minecraft_directory = ".gudu" #minecraft_launcher_lib.utils.get_minecraft_directory()
-lang = input("язык|language 'ru' or|или 'en': ")
+minecraft_directory = ".mc" #minecraft_launcher_lib.utils.get_minecraft_directory()
+lang = input("language 'ru', 'en', 'ua': ")
 if lang == "ru":
     l_l = ru_l
     l_l_s = ru_l_s
+if lang == "ua":
+    l_l = ua_l
+    l_l_s = ua_l_s
 else:
     l_l = en_l
     l_l_s = en_l_s
@@ -46,6 +54,10 @@ print('=========================================================================
 
 if ram_for_java == "":
     print(l_l_s[3])
+    sys.exit()
+
+if ram_for_java is int:
+    print(l_l_s[5])
     sys.exit()
 
 max_value = [0]
@@ -81,7 +93,7 @@ def install_mc(versionc, loader):
             pass
 
         else:
-            print(l_l_s[1])
+            print(l_l_s[4])
             sys.exit()
 
         minecraft_launcher_lib.quilt.install_quilt(str(versionc), minecraft_directory, callback=callback)
@@ -98,9 +110,7 @@ def install_mc(versionc, loader):
         minecraft_launcher_lib.install.install_minecraft_version(versionid=versionc,
                                                              minecraft_directory=minecraft_directory, callback=callback)
 
-threadinstall_mc = threading.Thread(target=install_mc, args=(versionc, loader))
-threadinstall_mc.start()
-# install_mc(versionc, loader)
+install_mc(versionc, loader)
 
 def launch_mc(uuidc, username):
     if username == "" or " ":
@@ -119,9 +129,9 @@ def launch_mc(uuidc, username):
 
     if loader == "fabric":
         pass
-        # subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
-        #     version="fabric-loader-" + str(fabric_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
-        #     options=options))
+        subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
+            version="fabric-loader-" + str(fabric_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
+            options=options))
 
     if loader == "forge":
         subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
@@ -130,7 +140,7 @@ def launch_mc(uuidc, username):
 
     if loader == "quilt":
         subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
-            version=str(versionc), minecraft_directory=minecraft_directory,
+            version="quilt-loader-" + str(quilt_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
             options=options))
 
     else:
@@ -140,6 +150,4 @@ def launch_mc(uuidc, username):
 
 threadlaunch_mc = threading.Thread(target=launch_mc, args=(uuidc, username))
 threadlaunch_mc.start()
-# launch_mc(uuidc, username)
-
 #-Xincgc
