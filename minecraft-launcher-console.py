@@ -5,10 +5,10 @@ from uuid import uuid1
 from random_username.generate import generate_username
 import threading
 
-ru_l = ["Введите версию: ", "Введите ник: ", "(если его нету нечего не вводите): ", "Загрузчик модов('fabric', 'forge', 'нету'): ", "Сколько RAM выделить в Gygabyte: "]
-en_l = ["Enter version: ", "Enter nickname: ", "(if you don't have one, don't enter anything): ", "Mod loader('fabric', 'forge', 'no'): ", "How much RAM to allocate in Gygabyte: "]
-ru_l_s = ["Версия не найдена", "Fabric не поддерживает эту версию", "Forge не поддерживает эту версию"]
-en_l_s = ["Version not found", "Fabric does not support this version", "Forge does not support this version"]
+ru_l = ["Введите версию: ", "Введите ник: ", "(если его нету нечего не вводите): ", "Загрузчик модов('fabric', 'forge', 'quilt', 'нету'): ", "Сколько RAM выделить в Gygabyte: "]
+en_l = ["Enter version: ", "Enter nickname: ", "(if you don't have one, don't enter anything): ", "Mod loader('fabric', 'forge', 'quilt', 'no'): ", "How much RAM to allocate in Gygabyte: "]
+ru_l_s = ["Версия не найдена", "Fabric не поддерживает эту версию", "Forge не поддерживает эту версию", "JVM не может быть запущена"]
+en_l_s = ["Version not found", "Fabric does not support this version", "Forge does not support this version", "JVM can't start"]
 l_l = []
 l_l_s = []
 
@@ -44,6 +44,10 @@ ram_for_java = input(l_l[4])
 ffv = minecraft_launcher_lib.forge.find_forge_version(versionc)
 print('=======================================================================================')
 
+if ram_for_java == "":
+    print(l_l_s[3])
+    sys.exit()
+
 max_value = [0]
 callback = {
         "setStatus": lambda text: print(text),
@@ -72,6 +76,16 @@ def install_mc(versionc, loader):
 
         minecraft_launcher_lib.fabric.install_fabric(str(versionc), minecraft_directory, callback=callback)
 
+    if loader == "quilt":
+        if minecraft_launcher_lib.quilt.is_minecraft_version_supported(versionc):
+            pass
+
+        else:
+            print(l_l_s[1])
+            sys.exit()
+
+        minecraft_launcher_lib.quilt.install_quilt(str(versionc), minecraft_directory, callback=callback)
+
 
     else:
       # if True:
@@ -84,15 +98,16 @@ def install_mc(versionc, loader):
         minecraft_launcher_lib.install.install_minecraft_version(versionid=versionc,
                                                              minecraft_directory=minecraft_directory, callback=callback)
 
-# threadinstall_mc = threading.Thread(target=install_mc, args=(versionc, loader))
-# threadinstall_mc.start()
-install_mc(versionc, loader)
+threadinstall_mc = threading.Thread(target=install_mc, args=(versionc, loader))
+threadinstall_mc.start()
+# install_mc(versionc, loader)
 
 def launch_mc(uuidc, username):
     if username == "" or " ":
         username = generate_username()[0]
     if uuidc == "" or " ":
         uuidc = uuid1()
+
 
     options = {
         'username': str(username),
@@ -113,13 +128,18 @@ def launch_mc(uuidc, username):
             version=str(versionc) + "-forge-" + ffv.replace(versionc + "-", ""), minecraft_directory=minecraft_directory,
             options=options))
 
+    if loader == "quilt":
+        subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
+            version=str(versionc), minecraft_directory=minecraft_directory,
+            options=options))
+
     else:
       subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
             version=str(versionc), minecraft_directory=minecraft_directory,
             options=options))
 
 threadlaunch_mc = threading.Thread(target=launch_mc, args=(uuidc, username))
-# threadlaunch_mc.start()
-launch_mc(uuidc, username)
+threadlaunch_mc.start()
+# launch_mc(uuidc, username)
 
 #-Xincgc
