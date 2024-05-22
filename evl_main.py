@@ -46,7 +46,7 @@ callback = {
 
 
 
-ram_for_java = "4096"
+ram_for_java = "1"
 fabric_loader_version = minecraft_launcher_lib.fabric.get_latest_loader_version()
 
 def settings_w():
@@ -101,8 +101,9 @@ label = ttk.Label(textvariable=str(prvalue_var) + "%")
 label.place(x=270, y=325)
 
 def launch_game():
-    # progressbar.start()
     # minecraft_launcher_lib.runtime.install_jvm_runtime("17.0.8", minecraft_directoryc, None)
+    # if minecraft_launcher_lib.fabric.FabricMinecraftVersion:
+
     minecraft_launcher_lib.fabric.install_fabric(str(versions_var.get()), minecraft_directory=minecraft_directoryc, callback=callback)
     print("Файлы успешно установлены")
 
@@ -113,12 +114,16 @@ def launch_game():
     options = {
         'username': str(username),
         'uuid': str(uuid1()),
-        'token': ''
+        'token': '',
+        "server": "95.216.30.27",
+        "port": "25801",
+        "jvm Arguments": ["-Xincgc"],
+        "launcher Name": "EV-Launcher",
+        "launcher Version": "0.7",
     }
-    # options["jvmArguments"] = ["-Xmx" + ram_for_java + "M", "-Xms256M"]
+    options["jvmArguments"] = ["-Xmx" + ram_for_java + "G", "-Xms256M"]
     options["gameDirectory"] = minecraft_directoryc
     options["demo"] = False
-    # progressbar.stop()
 
     print("Запуск Minecraft")
     subprocess.call(
@@ -130,21 +135,22 @@ def launch_thread():
     threadlau.start()
 
 def open_lasted_log():
-    file_lasted_lod = open('logs/latest.log', 'r')
-    # os.open("logs/latest.log", 'r')
-
-    llogtk = Tk()
-    llogtk.title("Логи(последние)")
-    llogtk.geometry("300x700")
-
-    btns = Button(llogtk, text="ВЫЙТИ", command=llogtk.destroy, activebackground="#cd0000", background="red")
-    btns.place(x=100, y=0)
-
-    lbllog = Label(llogtk, text=file_lasted_lod)
-    lbllog.place(x=10, y=350)
-
-    llogtk.mainloop()
-    file_lasted_lod.close()
+    subprocess.call(['python', 'evl_latest_log.py'])
+    # file_lasted_lod = open('logs/latest.log', 'r')
+    # # os.open("logs/latest.log", 'r')
+    #
+    # llogtk = Tk()
+    # llogtk.title("Логи(последние)")
+    # llogtk.geometry("300x700")
+    #
+    # btns = Button(llogtk, text="ВЫЙТИ", command=llogtk.destroy, activebackground="#cd0000", background="red")
+    # btns.place(x=100, y=0)
+    #
+    # lbllog = Label(llogtk, text=file_lasted_lod)
+    # lbllog.place(x=10, y=350)
+    #
+    # llogtk.mainloop()
+    # file_lasted_lod.close()
 
 
 btn = Button(text="СТАРТ", command=launch_thread, activebackground="#0a8b2e", background="green")
@@ -181,13 +187,6 @@ btns.place(x=250, y=0)
 evtk.mainloop()
 
 
-# как сделать tk интерфейс много поточным
-
-
-    # This is optional
-    # "executablePath": "java", # The path to the java executable
-    # "defaultExecutablePath": "java", # The path to the java executable if the version.json has none
-    # "jvmArguments": [], #The jvmArguments
     # "launcherName": "minecraft-launcher-lib", # The name of your launcher
     # "launcherVersion": "1.0", # The version of your launcher
     # "customResolution": False, # Enable custom resolution
