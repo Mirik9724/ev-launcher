@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import minecraft_launcher_lib
 import subprocess
+from dotenv import load_dotenv
 
 from random_username.generate import generate_username
 from uuid import uuid1
@@ -9,6 +10,10 @@ import os
 import threading
 from PIL import ImageTk
 
+
+load_dotenv()
+# os.environ["NEW_VARIABLE"] = "новое значение"
+# os.environ.pop("NEW_VARIABLE")
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
     """
     Call in a loop to create terminal progress bar
@@ -30,11 +35,18 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
     if iteration == total:
         print()
 
+def printPRbar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end=printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
+    progressbar.step(1)
 
 def maximum(max_value, value):
     max_value[0] = value
-
-
 
 max_value = [0]
 
@@ -46,7 +58,7 @@ callback = {
 
 
 
-ram_for_java = "1"
+ram_for_java =  os.getenv('ram_for_java')
 fabric_loader_version = minecraft_launcher_lib.fabric.get_latest_loader_version()
 
 def settings_w():
@@ -72,8 +84,15 @@ evtk.title("EV Launcher")
 evtk.iconbitmap(default="assets/ev-launcher_a.ico")
 evtk.geometry("300x400")
 
-entusername = Entry()
+usernameumol = ""
 
+if os.getenv('nickname') in ('', None):
+    usernameumol = ""
+else:
+    usernameumol = os.getenv('nickname')
+
+entusername = Entry()
+entusername.insert(0, usernameumol)
 entusername.place(x=10, y=275)
 entusername.configure(width=46)
 
@@ -93,7 +112,7 @@ minecraft_directoryc = ".ev-game" #minecraft_launcher_lib.utils.get_minecraft_di
 
 prvalue_var = IntVar(value=0)
 
-progressbar = ttk.Progressbar(orient="horizontal", variable=prvalue_var)
+progressbar = ttk.Progressbar(orient="horizontal", variable=prvalue_var, length=280, maximum=1)
 progressbar.place(x=10, y=325)
 
 
@@ -108,6 +127,8 @@ def launch_game():
     print("Файлы успешно установлены")
 
     username = entusername.get()
+    # os.environ['nickname'] = username
+    # os.environ.pop('nickname')
     if entusername.get() == "":
         username = generate_username()[0]
 
@@ -117,13 +138,12 @@ def launch_game():
         'token': '',
         "server": "95.216.30.27",
         "port": "25801",
-        "jvm Arguments": ["-Xincgc"],
+        "jvm Arguments": ["-Xincgc", "-Xmx" + ram_for_java + "G", "-Xms256M"],
         "launcher Name": "EV-Launcher",
         "launcher Version": "0.7",
+        "gameDirectory": minecraft_directoryc,
+        "demo": False
     }
-    options["jvmArguments"] = ["-Xmx" + ram_for_java + "G", "-Xms256M"]
-    options["gameDirectory"] = minecraft_directoryc
-    options["demo"] = False
 
     print("Запуск Minecraft")
     subprocess.call(
