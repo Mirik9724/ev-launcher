@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import minecraft_launcher_lib
 import subprocess
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 
 from random_username.generate import generate_username
 from uuid import uuid1
@@ -10,10 +10,9 @@ import os
 import threading
 from PIL import ImageTk
 
-
+evlversion = "0.7"
+env_file = '.env'
 load_dotenv()
-# os.environ["NEW_VARIABLE"] = "новое значение"
-# os.environ.pop("NEW_VARIABLE")
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
     """
     Call in a loop to create terminal progress bar
@@ -62,25 +61,10 @@ ram_for_java =  os.getenv('ram_for_java')
 fabric_loader_version = minecraft_launcher_lib.fabric.get_latest_loader_version()
 
 def settings_w():
-    settk = Tk()
-    settk.title("Настройки")
-    settk.geometry("250x200")
-
-    val = IntVar(value=10)
-
-    ramScale = ttk.Scale(settk, orient=HORIZONTAL, length=230, from_=256, to=8192, value=2048)
-    ramScale.place(x=10, y=20)
-    ram_for_java = ramScale.get()
-
-    lblset = Label(settk, textvariable=val)
-    lblset.place(x=70, y=100)
-
-
-
-    settk.mainloop()
+    subprocess.call(['python', 'evl_settings.py'])
 
 evtk = Tk()
-evtk.title("EV Launcher")
+evtk.title("EV Launcher v" + evlversion)
 evtk.iconbitmap(default="assets/ev-launcher_a.ico")
 evtk.geometry("300x400")
 
@@ -127,10 +111,9 @@ def launch_game():
     print("Файлы успешно установлены")
 
     username = entusername.get()
-    # os.environ['nickname'] = username
-    # os.environ.pop('nickname')
+    set_key(env_file, 'nickname', username)
     if entusername.get() == "":
-        username = generate_username()[0]
+        username = "Player"
 
     options = {
         'username': str(username),
@@ -138,9 +121,9 @@ def launch_game():
         'token': '',
         "server": "95.216.30.27",
         "port": "25801",
-        "jvm Arguments": ["-Xincgc", "-Xmx" + ram_for_java + "G", "-Xms256M"],
+        "jvm Arguments": ["-Xincgc", "-Xmx" + ram_for_java + "M", "-Xms256M"],
         "launcher Name": "EV-Launcher",
-        "launcher Version": "0.7",
+        "launcher Version": evlversion,
         "gameDirectory": minecraft_directoryc,
         "demo": False
     }
@@ -200,19 +183,6 @@ btns.place(x=165, y=0)
 btns = Button(text="ВЫЙТИ", command=evtk.destroy, activebackground="#cd0000", background="red")
 btns.place(x=250, y=0)
 
-
-
-
-
 evtk.mainloop()
-
-
-    # "launcherName": "minecraft-launcher-lib", # The name of your launcher
-    # "launcherVersion": "1.0", # The version of your launcher
-    # "customResolution": False, # Enable custom resolution
-    # "resolutionWidth": "854", # The resolution width
-    # "resolutionHeight": "480", # The resolution heigth
-    # "server": "example.com", # The IP of a server where Minecraft connect to after start
-    # "port": "123", # The port of a server where Minecraft connect to after start
 
 

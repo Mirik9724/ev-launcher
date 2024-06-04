@@ -1,18 +1,16 @@
 from tkinter import *
+from dotenv import load_dotenv, set_key
 from tkinter import ttk
-import pickle
-a = 0
-data = {"agree_license": a}
-with open("data.pickle", "wb") as f:
-    pickle.dump(data, f)
-
-with open("data.pickle", "rb") as f:
-    data = pickle.load(f)
+import os
+env_file = '.env'
+load_dotenv()
 
 def aa():
-    a = 1
+    set_key(env_file, 'nickname', 'Player_gudu')
+    evtk_l.destroy()
 
-if data == {"argee_license": 1}:
+if os.getenv('evlicense') == 0:
+    print("Вы отказались от лицензии")
     evtk_l = Tk()
     evtk_l.title("EV Launcher")
     evtk_l.iconbitmap(default="assets/ev-launcher_a.ico")
@@ -32,3 +30,6 @@ if data == {"argee_license": 1}:
     btn.configure(width=38, height=2)
 
     evtk_l.mainloop()
+
+else:
+    print("Вы согласны с лицензией")
