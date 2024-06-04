@@ -1,7 +1,17 @@
-import time
+import os.path
+import platform
+import subprocess
 
-with open('logs/latest.log', 'r') as file:
-    content = file.read()
-    print("Последние логи:\n")
-    time.sleep(0.5)
-    print(content)
+if os.path.exists("logs/latest.log"):
+    system = platform.system()
+    command = ""
+    if system == "Windows":
+        command = ['notepad.exe', 'logs/latest.log']
+
+    elif system == "Darwin":
+        command = ['open', 'logs/latest.log']
+
+    elif system == 'Linux':
+        command = ['xdg-open', 'logs/latest.log']
+
+    subprocess.Popen(command)

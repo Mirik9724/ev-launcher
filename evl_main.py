@@ -4,15 +4,20 @@ import minecraft_launcher_lib
 import subprocess
 from dotenv import load_dotenv, set_key
 
-from random_username.generate import generate_username
 from uuid import uuid1
 import os
 import threading
-from PIL import ImageTk
+import sys
 
 evlversion = "0.7"
 env_file = '.env'
 load_dotenv()
+
+if os.getenv('evlicense') == '0':
+    print("Вы отказались от лицензии")
+    sys.exit()
+
+print("Главное меню запущенно")
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
     """
     Call in a loop to create terminal progress bar
@@ -57,11 +62,15 @@ callback = {
 
 
 
-ram_for_java =  os.getenv('ram_for_java')
+
 fabric_loader_version = minecraft_launcher_lib.fabric.get_latest_loader_version()
 
 def settings_w():
     subprocess.call(['python', 'evl_settings.py'])
+
+def sett_thread():
+    threadsett = threading.Thread(target=settings_w(), args=())
+    threadsett.start()
 
 evtk = Tk()
 evtk.title("EV Launcher v" + evlversion)
@@ -92,7 +101,7 @@ vcombobox.configure(width=43, height=2)
 # vcombobox.set(1)
 
 versionc = str(vcombobox.get())  #versions_var.get()
-minecraft_directoryc = ".ev-game" #minecraft_launcher_lib.utils.get_minecraft_directory().replace('.minecarft', '.ev-launcher')
+minecraft_directoryc = ".ev-game"
 
 prvalue_var = IntVar(value=0)
 
@@ -109,19 +118,24 @@ def launch_game():
 
     minecraft_launcher_lib.fabric.install_fabric(str(versions_var.get()), minecraft_directory=minecraft_directoryc, callback=callback)
     print("Файлы успешно установлены")
-
+    acesstoken = os.getenv('accestoken')
     username = entusername.get()
+    ram_for_java = os.getenv('ram_for_java')
     set_key(env_file, 'nickname', username)
+    if ram_for_java is not int:
+        ram_for_java = 2048
+
     if entusername.get() == "":
         username = "Player"
+
 
     options = {
         'username': str(username),
         'uuid': str(uuid1()),
-        'token': '',
+        'token': str(acesstoken),
         "server": "95.216.30.27",
         "port": "25801",
-        "jvm Arguments": ["-Xincgc", "-Xmx" + ram_for_java + "M", "-Xms256M"],
+        "jvm Arguments": ["-Xincgc", "-Xmx" + str(ram_for_java) + "M", "-Xms256M"],
         "launcher Name": "EV-Launcher",
         "launcher Version": evlversion,
         "gameDirectory": minecraft_directoryc,
@@ -139,22 +153,10 @@ def launch_thread():
 
 def open_lasted_log():
     subprocess.call(['python', 'evl_latest_log.py'])
-    # file_lasted_lod = open('logs/latest.log', 'r')
-    # # os.open("logs/latest.log", 'r')
-    #
-    # llogtk = Tk()
-    # llogtk.title("Логи(последние)")
-    # llogtk.geometry("300x700")
-    #
-    # btns = Button(llogtk, text="ВЫЙТИ", command=llogtk.destroy, activebackground="#cd0000", background="red")
-    # btns.place(x=100, y=0)
-    #
-    # lbllog = Label(llogtk, text=file_lasted_lod)
-    # lbllog.place(x=10, y=350)
-    #
-    # llogtk.mainloop()
-    # file_lasted_lod.close()
 
+def open_news_mc():
+    # webbrowser.open_new("https://www.minecraft.net/ru-ru/articles")
+    pass
 
 btn = Button(text="СТАРТ", command=launch_thread, activebackground="#0a8b2e", background="green")
 btn.place(x=10, y=350)
@@ -177,7 +179,7 @@ btnnews = Button(text="НОВОСТИ МАЙНКРАФТА")
 btnnews.place(x=0, y=0)
 btnnews.configure(width=22, height=1)
 
-btns = Button(text="НАСТРОЙКИ", command=settings_w, activebackground="#c8c8c8")
+btns = Button(text="НАСТРОЙКИ", command=sett_thread, activebackground="#c8c8c8")
 btns.place(x=165, y=0)
 
 btns = Button(text="ВЫЙТИ", command=evtk.destroy, activebackground="#cd0000", background="red")
