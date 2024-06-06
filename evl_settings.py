@@ -1,8 +1,10 @@
 from tkinter import *
+from tkinter import ttk
 from dotenv import load_dotenv, set_key
 
 import os
 import platform
+import sys
 
 
 settk = Tk()
@@ -38,18 +40,60 @@ lblnick.place(relx=0.5, y=470, anchor='center')
 lblramjvm= Label(settk, text="RAM для JVM в MB(Только целые числа)")
 lblramjvm.place(relx=0.5, y=425, anchor='center')
 
-entramjvm = Entry()
-entramjvm.place(x=5, y=440)
-entramjvm.insert(0, os.getenv('ram_for_java'))
-entramjvm.configure(width=64)
+spinboxramjvm_var = StringVar(value=os.getenv('ram_for_java'))
 
-lblinfo = Label(settk, text=str(platform.node()) + " " + platform.system() + " " + platform.machine())
+spinboxramjvm = ttk.Spinbox(from_=256, to=8192, increment=128, textvariable=spinboxramjvm_var)
+spinboxramjvm.place(x=50, y=440)
+spinboxramjvm.configure(width=54)
+
+lblramjvm = ttk.Label(text="RAM: ")
+lblramjvm.place(x=5, y=440)
+
+entWidth = Entry()
+entWidth.place(x=160, y=375)
+entWidth.configure(width=17)
+entWidth.insert(0, os.getenv('custWidth'))
+
+lbl1 = Label(text="X")
+lbl1.place(x=270, y=375)
+
+entHeight = Entry()
+entHeight.place(x=290, y=375)
+entHeight.configure(width=17)
+entHeight.insert(0, os.getenv('custHeight'))
+
+enabled = IntVar()
+if os.getenv('evlicense') == "1":
+    enabled.set(1)
+else:
+    enabled.set(0)
+
+enabled2 = IntVar()
+if os.getenv('custRel') == "1":
+    enabled2.set(1)
+else:
+    enabled2.set(0)
+
+checkbuttonrel = ttk.Checkbutton(text="Кастомное разрешение", variable=enabled2)
+checkbuttonrel.place(x=5, y=375)
+
+checkbuttonlic = ttk.Checkbutton(text="Согласие с лицензией", variable=enabled)
+checkbuttonlic.place(x=5, y=395)
+
+lblinfo = Label(settk, text=str(platform.node()) + "-" + platform.system() + " " + platform.release() + "-" + platform.machine())
 lblinfo.place(x = 5 ,y = 5)
 
 def save_settings():
-    set_key(env_file, 'ram_for_java', str(entramjvm.get()))
+    set_key(env_file, 'ram_for_java', str(spinboxramjvm.get()))
     set_key(env_file, 'accestoken', entyaccestoken.get())
     set_key(env_file, 'nickname', entynick.get())
+    set_key(env_file, 'evlicense', str(enabled.get()))
+    set_key(env_file, 'custRel',  str(enabled2.get()))
+    set_key(env_file, 'custHeight', str(entHeight.get()))
+    set_key(env_file, 'custWidth', str(entWidth.get()))
+    if os.getenv('evlicense') == '0':
+        print("Вы отказались от лицензии")
+        sys.exit()
 
 btn = Button(text="СОХРАНИТЬ", command=save_settings, activebackground="#0a8b2e", background="green")
 btn.place(x=5, y=555)

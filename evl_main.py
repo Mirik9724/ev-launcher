@@ -39,16 +39,6 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
     if iteration == total:
         print()
 
-def printPRbar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end=printEnd)
-    # Print New Line on Complete
-    if iteration == total:
-        print()
-    progressbar.step(1)
-
 def maximum(max_value, value):
     max_value[0] = value
 
@@ -60,7 +50,8 @@ callback = {
     "setMax": lambda value: maximum(max_value, value)
 }
 
-
+def callbackV2():
+    pass
 
 
 fabric_loader_version = minecraft_launcher_lib.fabric.get_latest_loader_version()
@@ -119,6 +110,8 @@ def launch_game():
     minecraft_launcher_lib.fabric.install_fabric(str(versions_var.get()), minecraft_directory=minecraft_directoryc, callback=callback)
     print("Файлы успешно установлены")
     acesstoken = os.getenv('accestoken')
+    custRel = os.getenv('custRel')
+    custRelB = False
     username = entusername.get()
     ram_for_java = os.getenv('ram_for_java')
     set_key(env_file, 'nickname', username)
@@ -128,6 +121,10 @@ def launch_game():
     if entusername.get() == "":
         username = "Player"
 
+    if custRel == 1:
+        custRelB = True
+    else:
+        custRelB = False
 
     options = {
         'username': str(username),
@@ -139,7 +136,10 @@ def launch_game():
         "launcher Name": "EV-Launcher",
         "launcher Version": evlversion,
         "gameDirectory": minecraft_directoryc,
-        "demo": False
+        "demo": False,
+        "customResolution": custRelB,
+        "resolutionWidth": os.getenv('custWidth'),
+        "resolutionHeight": os.getenv('custHeight')
     }
 
     print("Запуск Minecraft")
