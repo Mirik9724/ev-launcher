@@ -1,16 +1,18 @@
 from tkinter import *
 from tkinter import ttk
-import minecraft_launcher_lib
-import subprocess
+from uuid import uuid1
 from dotenv import load_dotenv, set_key
 
-from uuid import uuid1
 import os
 import threading
 import sys
+import webbrowser
+import minecraft_launcher_lib
+import subprocess
 
 evlversion = "0.7"
 env_file = '.env'
+news_url = "https://www.minecraft.net/ru-ru/articles"
 load_dotenv()
 
 if os.getenv('evlicense') == '0':
@@ -107,6 +109,10 @@ def launch_game():
     # minecraft_launcher_lib.runtime.install_jvm_runtime("17.0.8", minecraft_directoryc, None)
     # if minecraft_launcher_lib.fabric.FabricMinecraftVersion:
 
+    if os.getenv('evlicense') == '0':
+        print("Вы отказались от лицензии")
+        sys.exit()
+
     minecraft_launcher_lib.fabric.install_fabric(str(versions_var.get()), minecraft_directory=minecraft_directoryc, callback=callback)
     print("Файлы успешно установлены")
     acesstoken = os.getenv('accestoken')
@@ -155,8 +161,7 @@ def open_lasted_log():
     subprocess.call(['python', 'evl_latest_log.py'])
 
 def open_news_mc():
-    # webbrowser.open_new("https://www.minecraft.net/ru-ru/articles")
-    pass
+    webbrowser.open_new(news_url)
 
 btn = Button(text="СТАРТ", command=launch_thread, activebackground="#0a8b2e", background="green")
 btn.place(x=10, y=350)
@@ -175,16 +180,14 @@ btn = Button(text="ЛОГИ", command=open_lasted_log)
 btn.place(x=250, y=350)
 btn.configure(width=4, height=2)
 
-btnnews = Button(text="НОВОСТИ МАЙНКРАФТА")
+btnnews = Button(text="НОВОСТИ МАЙНКРАФТА", command=open_news_mc)
 btnnews.place(x=0, y=0)
 btnnews.configure(width=22, height=1)
 
 btns = Button(text="НАСТРОЙКИ", command=sett_thread, activebackground="#c8c8c8")
 btns.place(x=165, y=0)
 
-btns = Button(text="ВЫЙТИ", command=evtk.destroy, activebackground="#cd0000", background="red")
-btns.place(x=250, y=0)
+btnd = Button(text="ВЫЙТИ", command=evtk.destroy, activebackground="#cd0000", background="red")
+btnd.place(x=250, y=0)
 
 evtk.mainloop()
-
-
