@@ -11,7 +11,7 @@ import minecraft_launcher_lib
 import subprocess
 import re
 
-evlversion = "0.7"
+evlversion = "0.9"
 env_file = '.env'
 news_url = "https://www.minecraft.net/ru-ru/articles"
 banned_keywords = ["LGBT", "pride", "rainbow", "queer", "gay", "lesbian", "trans"]
