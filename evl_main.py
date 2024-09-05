@@ -9,15 +9,21 @@ import sys
 import webbrowser
 import minecraft_launcher_lib
 import subprocess
+import re
 
 evlversion = "0.7"
 env_file = '.env'
 news_url = "https://www.minecraft.net/ru-ru/articles"
+banned_keywords = ["LGBT", "pride", "rainbow", "queer", "gay", "lesbian", "trans"]
 load_dotenv()
 
 if os.getenv('evlicense') == '0':
     print("Вы отказались от лицензии")
     sys.exit()
+
+if os.getenv('evlstop') == '0':
+    sys.exit()
+
 
 print("Главное меню запущенно")
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
@@ -85,7 +91,7 @@ entusername.configure(width=46)
 # lbl = Label(text="Выберите версию")
 # lbl.place(x=40, y=320)
 
-versions = ["1.19.4", "1.20.1", "1.20.4"]
+versions = ["1.20.1"]
 versions_var = StringVar(value=versions[0])
 
 vcombobox = ttk.Combobox(textvariable=versions_var, values=versions)
@@ -126,6 +132,19 @@ def launch_game():
 
     if entusername.get() == "":
         username = "Player"
+
+
+    access_allowed = True
+    for keyword in banned_keywords:
+        if re.search(keyword, username.lower()):
+            access_allowed = False
+            break
+
+    if access_allowed:
+        pass
+    else:
+        print("Доступ запрещен")
+        sys.exit()
 
     if custRel == 1:
         custRelB = True

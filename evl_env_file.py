@@ -17,3 +17,4 @@ if not os.path.exists(env_file):
     set_key(env_file, 'custRel',  '0')
     set_key(env_file, 'custHeight', '0')
     set_key(env_file, 'custWidth', '0')
+    set_key(env_file, 'evlstop', '1')
