@@ -1,14 +1,30 @@
+import subprocess
 import sys
-import pkg_resources
 
-installed_packages = pkg_resources.working_set
-installed_packages_list = sorted(
- "%s" % (i.key) for i in installed_packages
-)
-libs = ['minecraft-launcher-lib', 'pillow', 'random-username']
+# Список библиотек для установки
+required_packages = [
+    "python-dotenv",
+    "minecraft_launcher_lib",  # Добавьте другие библиотеки по мере необходимости
+    "cryptography"
+]
 
-if libs[0] in installed_packages_list and libs[1] in installed_packages_list and libs[2] in installed_packages_list:
- print("Все библиотеки устоновленны")
-else:
-  print("Устоновите библиотеки lbs_install_all_libs_for_windows.bat или обновите lbs_update_all_libs_for_windows.bat")
-  sys.exit()
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+def is_package_installed(package):
+    try:
+        subprocess.check_output([sys.executable, "-m", "pip", "show", package])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+def install_missing_packages(packages):
+    for package in packages:
+        if not is_package_installed(package):
+            print(f"Устанавливается: {package}")
+            install(package)
+        else:
+            print(f"{package} уже установлен.")
+
+# Устанавливаем только неустановленные библиотеки
+install_missing_packages(required_packages)

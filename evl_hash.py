@@ -5,6 +5,7 @@ from dotenv import load_dotenv, set_key
 
 env_file = '.env'
 load_dotenv()
+cryptography_norm = 0
 
 # Чтение публичного ключа из файла
 def load_public_key():
@@ -56,7 +57,7 @@ def verify_signature(public_key, file_path, signature):
 
 
 # Проверка всех подписанных файлов
-def verify_signed_files(combined_file):
+def verify_signed_files(combined_file, cryptography_norm):
     public_key = load_public_key()
     with open(combined_file, "r") as f:
         lines = f.readlines()
@@ -69,13 +70,17 @@ def verify_signed_files(combined_file):
         is_valid = verify_signature(public_key, file_path, signature)
         if is_valid:
             print(f"Подпись для файла '{file_path}' верна.")
+            cryptography_norm = cryptography_norm + 1
         else:
             print(f"Подпись для файла '{file_path}' неверна.")
             print("Остановка выполнения программы из-за неверной подписи!")
-            set_key(env_file, 'evlstop', '0')
+            set_key(env_file, 'evlstop', '1')
             return  # Прерываем выполнение, если подпись неверна
+
+        if cryptography_norm == 8:
+            set_key(env_file, 'evlstop', '0')
 
 
 if __name__ == "__main__":
     combined_file = "combined_signatures.txt"
-    verify_signed_files(combined_file)
+    verify_signed_files(combined_file, cryptography_norm)

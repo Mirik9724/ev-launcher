@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, filedialog
 from dotenv import load_dotenv, set_key
 
 import os
@@ -31,7 +31,7 @@ entynick.place(x=5, y=485)
 entynick.insert(0, os.getenv('nickname'))
 entynick.configure(width=64)
 
-lblacces = Label(settk, text="Acces Token(Не меняйте если незнаете зачем)")
+lblacces = Label(settk, text="Acess Token(Не меняйте если незнаете зачем)")
 lblacces.place(relx=0.5, y=515, anchor='center')
 
 lblnick = Label(settk, text="Nickname")
@@ -48,6 +48,23 @@ spinboxramjvm.configure(width=54)
 
 lblramjvm = ttk.Label(text="RAM: ")
 lblramjvm.place(x=5, y=440)
+
+def select_folder():
+    global folder_path
+    folder_path = filedialog.askdirectory()
+    if folder_path:
+        entdir.delete(0, END)  # Очистка предыдущего значения в Entry
+        entdir.insert(0, folder_path)  # Вставка нового пути
+
+
+# Поле для отображения выбранного пути
+entdir = Entry(width=22)
+entdir.place(x=155, y=345)
+entdir.insert(0, os.getenv('Directory'))
+
+# Кнопка для вызова функции выбора папки
+buttondir = Button(text="Выбрать папку", command=select_folder, width=13)
+buttondir.place(x=295, y=345)
 
 entWidth = Entry()
 entWidth.place(x=160, y=375)
@@ -74,6 +91,15 @@ if os.getenv('custRel') == "1":
 else:
     enabled2.set(0)
 
+enabled3 = IntVar()
+if os.getenv('custDirectory') == "1":
+    enabled3.set(1)
+else:
+    enabled3.set(0)
+
+checkbuttondir = ttk.Checkbutton(text="Кастомная директория", variable=enabled3)
+checkbuttondir.place(x=5, y=345)
+
 checkbuttonrel = ttk.Checkbutton(text="Кастомное разрешение", variable=enabled2)
 checkbuttonrel.place(x=5, y=375)
 
@@ -81,7 +107,7 @@ checkbuttonlic = ttk.Checkbutton(text="Согласие с лицензией", 
 checkbuttonlic.place(x=5, y=395)
 
 lblinfo = Label(settk, text=str(platform.node()) + "-" + platform.system() + " " + platform.release() + "-" + platform.machine())
-lblinfo.place(x = 5 ,y = 5)
+lblinfo.place(x=5, y=5)
 
 def save_settings():
     set_key(env_file, 'ram_for_java', str(spinboxramjvm.get()))
@@ -91,6 +117,9 @@ def save_settings():
     set_key(env_file, 'custRel',  str(enabled2.get()))
     set_key(env_file, 'custHeight', str(entHeight.get()))
     set_key(env_file, 'custWidth', str(entWidth.get()))
+    set_key(env_file, 'custDirectory', str(enabled3.get()))
+    set_key(env_file, 'Directory', str(folder_path))
+
     if os.getenv('evlicense') == '0':
         print("Вы отказались от лицензии")
         sys.exit()
@@ -100,6 +129,3 @@ btn.place(x=5, y=555)
 btn.configure(width=54, height=2)
 
 settk.mainloop()
-
-
-

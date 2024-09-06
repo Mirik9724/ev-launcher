@@ -11,19 +11,22 @@ import minecraft_launcher_lib
 import subprocess
 import re
 
-evlversion = "0.9"
+evlversion = "0.9.5"
 env_file = '.env'
 news_url = "https://www.minecraft.net/ru-ru/articles"
 banned_keywords = ["LGBT", "pride", "rainbow", "queer", "gay", "lesbian", "trans"]
 load_dotenv()
 
-if os.getenv('evlicense') == '0':
+if not os.getenv('evlicense') == '1':
     print("Вы отказались от лицензии")
     sys.exit()
 
-if os.getenv('evlstop') == '0':
+if os.getenv('evlstop')== '1':
     sys.exit()
 
+def stop():
+    evtk.destroy
+    sys.exit()
 
 print("Главное меню запущенно")
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
@@ -101,6 +104,13 @@ vcombobox.configure(width=43, height=2)
 
 versionc = str(vcombobox.get())  #versions_var.get()
 minecraft_directoryc = ".ev-game"
+
+if os.getenv('custDirectory') == "0":
+    pass
+else:
+    minecraft_directoryc = str(os.getenv('Directory'))
+
+
 
 prvalue_var = IntVar(value=0)
 
@@ -188,10 +198,6 @@ btn.configure(width=34, height=2)
 
 img = PhotoImage(file="assets/mc_title_.png")
 
-# img = Image.open("assets/mc_title.png")
-# img = img.resize((290, 82))
-# img = ImageTk.PhotoImage(img)
-
 label = ttk.Label(evtk, image=img)
 label.place(x=2.5, y=30)
 
@@ -206,7 +212,7 @@ btnnews.configure(width=22, height=1)
 btns = Button(text="НАСТРОЙКИ", command=sett_thread, activebackground="#c8c8c8")
 btns.place(x=165, y=0)
 
-btnd = Button(text="ВЫЙТИ", command=evtk.destroy, activebackground="#cd0000", background="red")
+btnd = Button(text="ВЫЙТИ", command=stop, activebackground="#cd0000", background="red")
 btnd.place(x=250, y=0)
 
 evtk.mainloop()
