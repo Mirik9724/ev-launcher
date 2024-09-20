@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from uuid import uuid1
+
 from dotenv import load_dotenv, set_key
 
 import os
@@ -78,6 +79,10 @@ evtk = Tk()
 evtk.title("EV Launcher v" + evlversion)
 evtk.iconbitmap(default="assets/ev-launcher_a.ico")
 evtk.geometry("300x400")
+
+evtk.image = PhotoImage(file="assets/a.png")
+# evl_cv = Label(image=evtk.image)
+# evl_cv.place(x=0, y=0)
 
 usernameumol = ""
 
