@@ -10,6 +10,6 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '20'  # Указываем Node.js версии 20
       - run: npm install
       - run: npm test
